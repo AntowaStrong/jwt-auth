@@ -82,7 +82,7 @@ class Manager
     public function encode(Payload $payload)
     {
         $token = $this->provider->encode($payload->get());
-
+        \Illuminate\Support\Facades\Log::info('jwt-token-encode', ['token' => $token, 'payload' => $payload->get(), 'time' => date('Y-m-d H:i:s', time()), 'carbon' => Carbon\Carbon::now()]);
         return new Token($token);
     }
 
@@ -99,6 +99,8 @@ class Manager
     public function decode(Token $token, $checkBlacklist = true)
     {
         $payloadArray = $this->provider->decode($token->get());
+
+        \Illuminate\Support\Facades\Log::info('jwt-token-decode', ['token' => $token->get(), 'payload' => $payloadArray, 'time' => date('Y-m-d H:i:s', time()), 'carbon' => Carbon\Carbon::now()]);
 
         $payload = $this->payloadFactory
                         ->setRefreshFlow($this->refreshFlow)
