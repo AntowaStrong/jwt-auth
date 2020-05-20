@@ -17,7 +17,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Http\Parser\Parser;
 use Tymon\JWTAuth\Support\CustomClaims;
-
+//hh
 class JWT
 {
     use CustomClaims;
