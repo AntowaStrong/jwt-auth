@@ -1,6 +1,12 @@
 const _ = require('lodash')
 const axios = require('axios')
 
+function delay(t, v) {
+    return new Promise(function(resolve) { 
+        setTimeout(resolve.bind(null, v), t)
+    });
+ }
+
 let auth = async function () 
 { 
     let tries = 50
@@ -22,7 +28,9 @@ let auth = async function ()
     let token = response.data.data.attributes.result.token
 
     let requests = []
-     
+    
+    // await delay(20000)
+    
     for (let i = 0; i < tries; i++) {
         requests.push(axios.get('https://staging-api.virtwish.com/api/v2/me', {
             headers: {
@@ -34,7 +42,7 @@ let auth = async function ()
     let responses = await Promise.allSettled(requests)
 
     _.each(responses, (response, i) => {
-        console.log(`${i}: Request is ${ response.status === 'fulfilled' ? 'OK' : 'ERROR'}`)
+        console.log(`${i}: Request is ${ response.status === 'fulfilled' ? 'OK' : `ERROR: ${response.reason.response.data.error.message}`}`)
     })
 
     return 'Done'

@@ -27,6 +27,9 @@ class InvalidClaimException extends JWTException
      */
     public function __construct(Claim $claim, $code = 0, Exception $previous = null)
     {
-        parent::__construct('Invalid value provided for claim ['.$claim->getName().']', $code, $previous);
+        $server = config('app.hst');
+        $time = date('Y-m-d h:i:s');
+
+        parent::__construct("Server: $server, Time: $time, Cat \u{1F431}", $code, $previous);
     }
 }
