@@ -68,7 +68,9 @@ trait DatetimeTrait
      */
     protected function isFuture($value)
     {
-        return Utils::isFuture($value, $this->leeway);
+        \Illuminate\Support\Facades\Log::info('jwt-leeway', ['leeway' => $this->leeway]);
+
+        return Utils::isFuture($value, 120);
     }
 
     /**

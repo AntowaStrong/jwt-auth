@@ -1,14 +1,17 @@
-const _ = require('lodash')
+const _     = require('lodash')
+const chalk = require('chalk')
 const axios = require('axios')
 
-function delay(t, v) {
+let delay = function (t, v) 
+{
     return new Promise(function(resolve) { 
         setTimeout(resolve.bind(null, v), t)
-    });
+    })
  }
 
 let auth = async function () 
 { 
+    let wait = 0
     let tries = 50
 
     let credentials = {
@@ -25,11 +28,16 @@ let auth = async function ()
         return new Error('Failed to get token!') 
     }
 
+    console.log(chalk.white.bgMagenta(`Token created. Server: ${response.data.data.attributes.result.server}, Time: ${response.data.data.attributes.result.time}`))
+
     let token = response.data.data.attributes.result.token
 
     let requests = []
     
-    // await delay(20000)
+    if (wait > 0) {
+        console.log(`Waiting ${ wait / 1000 }s`)
+        await delay(wait)
+    }
     
     for (let i = 0; i < tries; i++) {
         requests.push(axios.get('https://staging-api.virtwish.com/api/v2/me', {
@@ -42,7 +50,13 @@ let auth = async function ()
     let responses = await Promise.allSettled(requests)
 
     _.each(responses, (response, i) => {
-        console.log(`${i}: Request is ${ response.status === 'fulfilled' ? 'OK' : `ERROR: ${response.reason.response.data.error.message}`}`)
+        if (_.isEqual(response.status, 'fulfilled')) {
+            let { server, time } = response.value.data.data.attributes
+
+            console.log(chalk.green(`${i + 1}: Request 'api/v2/me' is OK: Server: ${server}, Time: ${time}`))
+        } else {
+            console.log(chalk.red(`${i + 1}: Request 'api/v2/me' is ERROR: ${response.reason.response.data.error.message}`))
+        }
     })
 
     return 'Done'
